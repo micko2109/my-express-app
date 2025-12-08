@@ -14,6 +14,10 @@ app.get('/books', (req, res) => {
   res.json(books);
 });
 
+app.get('/hello', (req, res) => {
+  res.send('Hello World!');
+});
+
 // POST /books - dodaj novu knjigu
 app.post('/books', (req, res) => {
   const { title } = req.body;
