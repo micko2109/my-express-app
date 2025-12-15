@@ -21,19 +21,24 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
+
     - name: Install dependencies
       run: npm install
 
+    - name: Change to app directory
+      run: cd my-express-app-local-backup && npm install
 
     - name: Run backend tests with coverage
       run: |
+        cd my-express-app-local-backup
         npm run test:backend -- --coverageReporters=html --coverageReporters=text --coverageReporters=lcov
+
 
     - name: Upload backend coverage reports
       uses: actions/upload-artifact@v4
       with:
         name: backend-coverage-report
-        path: coverage/
+        path: my-express-app-local-backup/coverage/
         retention-days: 30
 
     - name: Upload backend test results
@@ -42,8 +47,8 @@ jobs:
       with:
         name: backend-test-results
         path: |
-          coverage/lcov.info
-          coverage/coverage-final.json
+          my-express-app-local-backup/coverage/lcov.info
+          my-express-app-local-backup/coverage/coverage-final.json
         retention-days: 30
 
   frontend-tests:
@@ -60,19 +65,24 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
+
     - name: Install dependencies
       run: npm install
 
+    - name: Change to app directory
+      run: cd my-express-app-local-backup && npm install
 
     - name: Run frontend tests with coverage
       run: |
+        cd my-express-app-local-backup
         npm run test:frontend -- --coverageReporters=html --coverageReporters=text --coverageReporters=lcov
+
 
     - name: Upload frontend coverage reports
       uses: actions/upload-artifact@v4
       with:
         name: frontend-coverage-report
-        path: coverage/
+        path: my-express-app-local-backup/coverage/
         retention-days: 30
 
     - name: Upload frontend test results
@@ -81,8 +91,8 @@ jobs:
       with:
         name: frontend-test-results
         path: |
-          coverage/lcov.info
-          coverage/coverage-final.json
+          my-express-app-local-backup/coverage/lcov.info
+          my-express-app-local-backup/coverage/coverage-final.json
         retention-days: 30
 
   # Combined job for overall coverage report
@@ -102,30 +112,38 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
+
     - name: Install dependencies
       run: npm install
+
+    - name: Change to app directory
+      run: cd my-express-app-local-backup && npm install
 
     - name: Download all coverage reports
       uses: actions/download-artifact@v4
       with:
         path: ./coverage-reports
 
+
     - name: Combine coverage reports
       run: |
+        cd my-express-app-local-backup
         # Copy all coverage files to a single directory
         mkdir -p combined-coverage
-        cp -r ./coverage-reports/backend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
-        cp -r ./coverage-reports/frontend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
+        cp -r ../coverage-reports/backend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
+        cp -r ../coverage-reports/frontend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
         
-        # Generate combined coverage summary
-        npm test -- --coverage --coverageReporters=text --coverageReporters=lcov
+        # Generate combined coverage summary from the app directory
+        npm test -- --coverage --coverageReporters=text --coverageReporters=lcov --coverageSummaryFile=coverage/coverage-summary.json
+
 
     - name: Upload combined coverage report
       uses: actions/upload-artifact@v4
       with:
         name: combined-coverage-report
-        path: coverage/
+        path: my-express-app-local-backup/coverage/
         retention-days: 30
+
 
     - name: Comment PR with coverage
       if: github.event_name == 'pull_request'
@@ -133,7 +151,7 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const path = './combined-coverage/coverage-summary.json';
+          const path = './my-express-app-local-backup/coverage/coverage-summary.json';
           
           if (fs.existsSync(path)) {
             const coverage = JSON.parse(fs.readFileSync(path, 'utf8'));
@@ -174,11 +192,16 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
+
     - name: Install dependencies
       run: npm install
 
+    - name: Change to app directory
+      run: cd my-express-app-local-backup && npm install
+
     - name: Run linting (if available)
       run: |
+        cd my-express-app-local-backup
         if npm list eslint &> /dev/null; then
           npx eslint . --ext .js,.ts,.jsx,.tsx || echo "Linting completed with warnings"
         else
@@ -187,6 +210,7 @@ jobs:
 
     - name: Check for test coverage threshold
       run: |
+        cd my-express-app-local-backup
         if [ -f "coverage/coverage-summary.json" ]; then
           echo "Checking coverage thresholds..."
           # Add custom coverage threshold logic here if needed
