@@ -141,3 +141,5 @@ playwright/.cache/
 # Package files
 *.tar.gz
 *.zip
+
+my-express-app/node_modules/
