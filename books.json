@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1,
+    "title": "The Great Gatsby",
+    "ratings": []
+  },
+  {
+    "id": 2,
+    "title": "To Kill a Mockingbird",
+    "ratings": []
+  },
+  {
+    "id": 3,
+    "title": "1984",
+    "ratings": []
+  },
+  {
+    "id": 4,
+    "title": "New Test Book",
+    "ratings": []
+  },
+  {
+    "id": 5,
+    "title": "Test Book",
+    "ratings": [
+      4
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Another Test Book",
+    "ratings": [
+      5
+    ]
+  }
+]
