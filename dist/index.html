@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Books Management</h1>
+
+        <section id="books-list">
+            <h2>All Books</h2>
+            <button id="load-books">Load Books</button>
+            <ul id="books"></ul>
+        </section>
+
+        <section id="add-book">
+            <h2>Add New Book</h2>
+            <input type="text" id="book-title" placeholder="Book Title">
+            <button id="add-book-btn">Add Book</button>
+        </section>
+
+        <section id="search-book">
+            <h2>Search Books</h2>
+            <input type="text" id="search-title" placeholder="Search by title">
+            <button id="search-btn">Search</button>
+            <ul id="search-results"></ul>
+        </section>
+
+        <section id="book-details">
+            <h2>Book Details</h2>
+            <input type="number" id="book-id" placeholder="Book ID">
+            <button id="get-book-btn">Get Book</button>
+            <div id="book-info"></div>
+        </section>
+
+        <section id="update-book">
+            <h2>Update Book</h2>
+            <input type="number" id="update-id" placeholder="Book ID">
+            <input type="text" id="update-title" placeholder="New Title">
+            <button id="update-btn">Update</button>
+        </section>
+
+        <section id="rate-book">
+            <h2>Rate Book</h2>
+            <input type="number" id="rate-id" placeholder="Book ID">
+            <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5">
+            <button id="rate-btn">Rate</button>
+        </section>
+
+        <section id="delete-book">
+            <h2>Delete Book</h2 type="number">
+            <input id="delete-id" placeholder="Book ID">
+            <button id="delete-btn">Delete</button>
+        </section>
+
+        <section id="stats">
+            <h2>Statistics</h2>
+            <button id="get-stats">Get Stats</button>
+            <div id="stats-info"></div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

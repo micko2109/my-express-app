@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "type": "commonjs",
+
   "scripts": {
     "start": "node server.js",
     "test": "jest --coverage",
@@ -11,12 +12,14 @@
     "test:frontend": "jest tests --coverage --watchAll=false",
     "build": "echo 'Building application...' && mkdir -p dist build",
     "build:frontend": "echo 'Building frontend...' && mkdir -p dist && cp -r public/* dist/ 2>/dev/null || echo 'No public directory'",
+
+
     "build:backend": "echo 'Building backend...' && mkdir -p build && cp server.js package.json .dockerignore build/ 2>/dev/null || echo 'No backend directory'",
     "build:all": "npm run build && npm run build:frontend && npm run build:backend",
     "lint": "eslint . --ext .js,.ts,.jsx,.tsx 2>/dev/null || echo 'ESLint not configured - skipping linting'",
     "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix 2>/dev/null || echo 'ESLint not configured - skipping linting'",
     "security-audit": "npm audit --audit-level moderate",
-    "docker:build": "docker build -t my-express-app .",
+    "docker:build": "docker build -t my-express-app ./my-express-app-local-backup",
     "docker:run": "docker run -p 3000:3000 my-express-app",
     "pretest": "echo 'Running pre-test checks...'",
     "posttest": "echo 'Test execution completed'"
@@ -48,14 +51,9 @@
       "!**/*.config.js"
     ],
     "coverageDirectory": "coverage",
-    "coverageReporters": [
-      "text",
-      "lcov",
-      "html"
-    ]
+    "coverageReporters": ["text", "lcov", "html"]
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mime-types": "^2.1.35"
+    "express": "^5.2.1"
   }
 }
