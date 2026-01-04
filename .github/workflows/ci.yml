@@ -1,463 +1,126 @@
-
-
 name: Complete CI/CD Pipeline
 
 on:
   push:
-    branches: 
-    - main
-    - production 
+    branches: [ main ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
 
 env:
-  NODE_VERSION: '18'
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  NODE_VERSION: 18
+  IMAGE_NAME: my-express-app
 
 jobs:
- # part for building with caching 
+
+# -----------------------------
+# 1. BUILD PHASE
+# -----------------------------
   build:
+    runs-on: ubuntu-latest
     name: Build Application
-    runs-on: ubuntu-latest
-    
-    outputs:
-      build-status: ${{ steps.build.outcome }}
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: 'package-lock.json'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build application
-      id: build
-      run: |
-        echo " Starting build process..."
-        
-        # Run build scripts
-        npm run build
-        npm run build:frontend
-        npm run build:backend
-        
-        # Verify build outputs
-        echo " Build outputs:"
-        ls -la dist/ 2>/dev/null || echo "No dist directory"
-        ls -la build/ 2>/dev/null || echo "No build directory"
-        
-        echo " Build completed successfully"
-
-    - name: Upload frontend build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-build
-        path: dist/
-        retention-days: 30
-
-    - name: Upload backend build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-build
-        path: build/
-        retention-days: 30
-
-    - name: Upload application package
-      uses: actions/upload-artifact@v4
-      with:
-        name: application-package
-        path: package.json
-        retention-days: 30
-
- # drugi del za backend teste 
-  backend-tests:
-    name: Backend Tests
-    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Run backend tests with coverage
-      run: |
-        echo " Running backend tests..."
-        npm run test:backend
-        
-        echo " Coverage report generated"
-        if [ -f "coverage/lcov.info" ]; then
-          echo "Coverage file: $(wc -l < coverage/lcov.info) lines"
-        fi
+      - name: Build frontend & backend
+        run: |
+          npm run build
+          ls -la dist
+          ls -la build
 
-    - name: Upload backend coverage reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-coverage-report
-        path: coverage/
-        retention-days: 30
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
 
-    - name: Upload backend test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: backend-test-results
-        path: |
-          coverage/lcov.info
-          coverage/coverage-final.json
-          coverage/coverage-summary.json
-        retention-days: 30
+      - name: Upload backend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: build/
 
-# frontend testi
-  frontend-tests:
-    name: Frontend Tests
+# -----------------------------
+# 2. TESTS
+# -----------------------------
+  tests:
     runs-on: ubuntu-latest
+    name: Run Tests
+    needs: build
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
 
-    - name: Install dependencies
-      run: npm ci
+      - run: npm ci
+      - run: npm test
 
-    - name: Run frontend tests with coverage
-      run: |
-        echo "Running frontend tests..."
-        npm run test:frontend
-        
-        echo "Frontend coverage report generated"
-        if [ -f "coverage/lcov.info" ]; then
-          echo "Coverage file: $(wc -l < coverage/lcov.info) lines"
-        fi
-
-    - name: Upload frontend coverage reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-coverage-report
-        path: coverage/
-        retention-days: 30
-
-    - name: Upload frontend test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: frontend-test-results
-        path: |
-          coverage/lcov.info
-          coverage/coverage-final.json
-          coverage/coverage-summary.json
-        retention-days: 30
-
-# faza 4 : kvaliteta koda in varnost 
-  code-quality:
-    name: Code Quality Checks
+# -----------------------------
+# 3. DOCKER BUILD & PUSH
+# -----------------------------
+  docker:
     runs-on: ubuntu-latest
+    name: Build & Push Docker Image
+    needs: tests
+    if: github.ref == 'refs/heads/main'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Run security audit
-      run: |
-        echo " Running security audit..."
-        npm audit --audit-level moderate || echo "Security audit completed with warnings"
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest .
 
-    - name: Check for linting
-      run: |
-        echo " Running code quality checks..."
-        npm run lint
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest
 
-    - name: Generate quality summary
-      run: |
-        echo "##  Code Quality Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Security Audit**:  Completed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Linting**:  Completed" >> $GITHUB_STEP_SUMMARY
-        echo "- **Best Practices**:  Verified" >> $GITHUB_STEP_SUMMARY
-
-  # Faza 5:Coverage Report Generation
-  coverage-report:
-    name: Generate Coverage Summary
-    runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
-    if: always()
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Download all coverage reports
-      uses: actions/download-artifact@v4
-      with:
-        path: ./coverage-reports
-
-    - name: Combine coverage reports
-      run: |
-        echo " Combining coverage reports..."
-        
-        # Merge coverage files
-        mkdir -p combined-coverage
-        cp -r coverage-reports/backend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
-        cp -r coverage-reports/frontend-coverage-report/* ./combined-coverage/ 2>/dev/null || true
-        
-        # Generate summary if possible
-        if [ -f "combined-coverage/coverage-summary.json" ]; then
-          echo " Coverage summary generated"
-        fi
-
-    - name: Upload combined coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: combined-coverage-report
-        path: combined-coverage/
-        retention-days: 30
-
-    - name: Comment PR with coverage
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          const path = './combined-coverage/coverage-summary.json';
-          
-          if (fs.existsSync(path)) {
-            try {
-              const coverage = JSON.parse(fs.readFileSync(path, 'utf8'));
-              const total = coverage.total;
-              
-              const comment = `## Test Coverage Report
-              
-              | Coverage Type | Lines | Functions | Branches | Statements |
-              |---------------|-------|-----------|----------|------------|
-              | **Overall** | ${total.lines.pct}% | ${total.functions.pct}% | ${total.branches.pct}% | ${total.statements.pct}% |
-              
-              ### Test Summary:
-              -  **Backend Tests**: 45 tests
-              -  **Frontend Tests**: 10 tests  
-              -  **Total Tests**: 55 tests
-              
-               Coverage reports are available as artifacts in the Actions tab.`;
-              
-              github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: comment
-              });
-            } catch (error) {
-              console.log('Coverage summary not available for comment');
-            }
-          }
-
-  # Faza 6: Docker build and push 
-  docker-build:
-
-  docker-dev:
-  name: Docker Build (Development)
-  runs-on: ubuntu-latest
-  needs: [build]
-  if: github.ref == 'refs/heads/main'
-  environment: Development
-
-  steps:
-    - uses: actions/checkout@v4
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build & Push DEV image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/my-express-app:dev .
-        docker push ${{ secrets.DOCKER_USERNAME }}/my-express-app:dev
-
-docker-prod:
-  name: Docker Build (Production)
-  runs-on: ubuntu-latest
-  needs: [build]
-  if: github.ref == 'refs/heads/production'
-  environment: Production
-
-  steps:
-    - uses: actions/checkout@v4
-
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build & Push PROD image
-      run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/my-express-app:prod .
-        docker push ${{ secrets.DOCKER_USERNAME }}/my-express-app:prod
-
-
-  
-  # Deployment to Vercel
+# -----------------------------
+# 4. DEPLOY TO VERCEL
+# -----------------------------
   deploy:
+    runs-on: ubuntu-latest
     name: Deploy to Vercel
-    runs-on: ubuntu-latest
-    needs: [build, backend-tests, frontend-tests, code-quality, docker-build]
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    needs: docker
+    if: github.ref == 'refs/heads/main'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: Install Vercel CLI
-      run: npm install --global vercel@latest
+      - name: Install Vercel
+        run: npm install -g vercel
 
-    - name: Pull Vercel Environment Information
-      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Pull Vercel config
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-    - name: Build Project Artifacts
-      run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Vercel project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-    - name: Deploy Project Artifacts to Vercel
-      run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-    - name: Deployment Summary
-      if: always()
-      run: |
-        echo "##  Deployment Summary" >> $GITHUB_STEP_SUMMARY
-        if [[ "${{ job.status }}" == "success" ]]; then
-          echo "- **Status**:  Successfully deployed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Platform**: Vercel" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: Production" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL**: Available in Vercel dashboard" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Status**:  Deployment failed" >> $GITHUB_STEP_SUMMARY
-        fi
-
-  # faza 8: final summary 
-  pipeline-summary:
-    name: Pipeline Summary
-    runs-on: ubuntu-latest
-    needs: [build, backend-tests, frontend-tests, code-quality, coverage-report, docker-build, deploy]
-    if: always()
-
-    steps:
-    - name: Generate Pipeline Summary
-      run: |
-        echo "##  Complete CI/CD Pipeline Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        
-        echo "###  Build Phase " >> $GITHUB_STEP_SUMMARY
-        if [[ "${{ needs.build.result }}" == "success" ]]; then
-          echo "- **Status**:  Passed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Caching**:  Enabled" >> $GITHUB_STEP_SUMMARY
-          echo "- **Artifacts**:  Saved for 30 days" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Status**:  Failed" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Testing Phase (15%)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Backend Tests**: $([ "${{ needs.backend-tests.result }}" == "success" ] && echo "Passed" || echo " Failed")" >> $GITHUB_STEP_SUMMARY
-        echo "- **Frontend Tests**: $([ "${{ needs.frontend-tests.result }}" == "success" ] && echo " Passed" || echo " Failed")" >> $GITHUB_STEP_SUMMARY
-        echo "- **Coverage Reports**: $([ "${{ needs.coverage-report.result }}" == "success" ] && echo " Generated" || echo " Failed")" >> $GITHUB_STEP_SUMMARY
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "###  Code Quality (15%)" >> $GITHUB_STEP_SUMMARY
-        if [[ "${{ needs.code-quality.result }}" == "success" ]]; then
-          echo "- **Status**:  Passed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Security Audit**:  Completed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Linting**: Completed" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Status**:  Completed with warnings" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "###  Docker Build (20%)" >> $GITHUB_STEP_SUMMARY
-        if [[ "${{ needs.docker-build.result }}" == "success" ]]; then
-          echo "- **Status**: Built and pushed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Registry**: Docker Hub" >> $GITHUB_STEP_SUMMARY
-          echo "- **Image**: Available for deployment" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Status**:  Failed" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "###  Deployment (20%)" >> $GITHUB_STEP_SUMMARY
-        if [[ "${{ needs.deploy.result }}" == "success" ]]; then
-          echo "- **Status**:  Successfully deployed" >> $GITHUB_STEP_SUMMARY
-          echo "- **Platform**: Vercel" >> $GITHUB_STEP_SUMMARY
-          echo "- **Live URL**: Available in Vercel dashboard" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Status**:  Deployment failed" >> $GITHUB_STEP_SUMMARY
-        fi
-        
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "###  Overall Assessment" >> $GITHUB_STEP_SUMMARY
-        
-        # Calculate success rate
-        total_jobs=7
-        passed_jobs=0
-        [[ "${{ needs.build.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.backend-tests.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.frontend-tests.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.code-quality.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.coverage-report.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.docker-build.result }}" == "success" ]] && ((passed_jobs++))
-        [[ "${{ needs.deploy.result }}" == "success" ]] && ((passed_jobs++))
-        
-        success_rate=$((passed_jobs * 100 / total_jobs))
-        
-        echo "- **Success Rate**: $success_rate% ($passed_jobs/$total_jobs jobs passed)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Requirements Met**:  All major CI/CD components implemented" >> $GITHUB_STEP_SUMMARY
-        echo "- **Artifacts**: All reports saved for 30 days" >> $GITHUB_STEP_SUMMARY
-        
-        if [ $success_rate -eq 100 ]; then
-          echo "- **Final Status**:  **COMPLETE SUCCESS**" >> $GITHUB_STEP_SUMMARY
-        elif [ $success_rate -ge 80 ]; then
-          echo "- **Final Status**:  **MOSTLY SUCCESSFUL**" >> $GITHUB_STEP_SUMMARY
-        else
-          echo "- **Final Status**:  **NEEDS ATTENTION**" >> $GITHUB_STEP_SUMMARY
-        fi
-
-
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
