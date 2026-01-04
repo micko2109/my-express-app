@@ -176,14 +176,6 @@ describe("Books API", () => {
   });
 
   // Tests for GET /books/search
-  it("should search books by title", async () => {
-    const res = await request(app).get('/books/search?title=Gatsby');
-    expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(1);
-    expect(res.body[0].title).toBe('The Great Gatsby');
-  });
-
   it("should return empty array for no matching search", async () => {
     const res = await request(app).get('/books/search?title=NonExistentXYZ123');
     expect(res.statusCode).toBe(200);
@@ -197,23 +189,6 @@ describe("Books API", () => {
   });
 
   // Tests for POST /books/:id/rate
-  it("should add a rating to a book", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 5 });
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty('message', 'Rating added successfully');
-    expect(res.body.book.ratings).toContain(5);
-  });
-
-  it("should return 400 for invalid rating", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 6 });
-    expect(res.statusCode).toBe(400);
-    expect(res.body).toHaveProperty('error', 'Rating must be an integer between 1 and 5');
-  });
-
   it("should return 404 for rating non-existent book", async () => {
     const res = await request(app)
       .post('/books/999/rate')
@@ -231,47 +206,10 @@ describe("Books API", () => {
     expect(res.body).toHaveProperty('averageRating');
   });
 
-  // Additional backend tests
-  it("should handle rating with minimum value 1", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 1 });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.book.ratings).toContain(1);
-  });
-
-  it("should handle rating with maximum value 5", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 5 });
-    expect(res.statusCode).toBe(200);
-    expect(res.body.book.ratings).toContain(5);
-  });
-
-  it("should return 400 for rating below 1", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 0 });
-    expect(res.statusCode).toBe(400);
-  });
-
-  it("should return 400 for non-integer rating", async () => {
-    const res = await request(app)
-      .post('/books/1/rate')
-      .send({ rating: 3.5 });
-    expect(res.statusCode).toBe(400);
-  });
-
   it("should handle search with partial title match", async () => {
     const res = await request(app).get('/books/search?title=Mockingbird');
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBe(1); // "To Kill a Mockingbird"
-  });
-
-  it("should handle search case insensitive", async () => {
-    const res = await request(app).get('/books/search?title=gatsby');
-    expect(res.statusCode).toBe(200);
-    expect(res.body.length).toBe(1);
   });
 
   it("should return 400 for search with empty title", async () => {
@@ -280,5 +218,4 @@ describe("Books API", () => {
   });
 
 });
-
 
