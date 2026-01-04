@@ -9,8 +9,8 @@
       "version": "1.0.0",
       "license": "ISC",
       "dependencies": {
-        "express": "^4.18.2",
-        "mime-types": "^2.1.35"
+        "express": "4.18.2",
+        "mime-types": "2.1.35"
       },
       "devDependencies": {
         "jest": "^29.7.0",
@@ -1605,9 +1605,9 @@
       "license": "MIT"
     },
     "node_modules/baseline-browser-mapping": {
-      "version": "2.9.11",
-      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.9.11.tgz",
-      "integrity": "sha512-Sg0xJUNDU1sJNGdfGWhVHX0kkZ+HWcvmVymJbj6NSgZZmW/8S9Y2HQ5euytnIgakgxN6papOAWiwDo1ctFDcoQ==",
+      "version": "2.9.9",
+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.9.9.tgz",
+      "integrity": "sha512-V8fbOCSeOFvlDj7LLChUcqbZrdKD9RU/VR260piF1790vT0mfLSwGc/Qzxv3IqiTukOpNtItePa0HBpMAj7MDg==",
       "dev": true,
       "license": "Apache-2.0",
       "bin": {
@@ -1646,6 +1646,21 @@
       "engines": {
         "node": ">= 0.8",
         "npm": "1.2.8000 || >= 1.4.16"
+      }
+    },
+    "node_modules/body-parser/node_modules/qs": {
+      "version": "6.11.0",
+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.11.0.tgz",
+      "integrity": "sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==",
+      "license": "BSD-3-Clause",
+      "dependencies": {
+        "side-channel": "^1.0.4"
+      },
+      "engines": {
+        "node": ">=0.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
       }
     },
     "node_modules/brace-expansion": {
@@ -1782,9 +1797,9 @@
       }
     },
     "node_modules/caniuse-lite": {
-      "version": "1.0.30001761",
-      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001761.tgz",
-      "integrity": "sha512-JF9ptu1vP2coz98+5051jZ4PwQgd2ni8A+gYSN7EA7dPKIMf0pDlSUxhdmVOaV3/fYK5uWBkgSXJaRLr4+3A6g==",
+      "version": "1.0.30001760",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001760.tgz",
+      "integrity": "sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==",
       "dev": true,
       "funding": [
         {
@@ -2503,6 +2518,21 @@
       },
       "engines": {
         "node": ">= 0.10.0"
+      }
+    },
+    "node_modules/express/node_modules/qs": {
+      "version": "6.11.0",
+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.11.0.tgz",
+      "integrity": "sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==",
+      "license": "BSD-3-Clause",
+      "dependencies": {
+        "side-channel": "^1.0.4"
+      },
+      "engines": {
+        "node": ">=0.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/ljharb"
       }
     },
     "node_modules/fast-json-stable-stringify": {
@@ -4823,12 +4853,13 @@
       "license": "MIT"
     },
     "node_modules/qs": {
-      "version": "6.11.0",
-      "resolved": "https://registry.npmjs.org/qs/-/qs-6.11.0.tgz",
-      "integrity": "sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==",
+      "version": "6.14.0",
+      "resolved": "https://registry.npmjs.org/qs/-/qs-6.14.0.tgz",
+      "integrity": "sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==",
+      "dev": true,
       "license": "BSD-3-Clause",
       "dependencies": {
-        "side-channel": "^1.0.4"
+        "side-channel": "^1.1.0"
       },
       "engines": {
         "node": ">=0.6"
