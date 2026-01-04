@@ -90,7 +90,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker buildx build -t ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest --push --file ./Dockerfile .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/my-express-app:latest .
 
       - name: Push Docker image
         run: |
