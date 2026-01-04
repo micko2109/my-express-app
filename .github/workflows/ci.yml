@@ -67,6 +67,7 @@ jobs:
 
       - run: npm ci
       - run: npm test
+      - run: npx jest tests/books.test.js
 
 # -----------------------------
 # 3. DOCKER BUILD & PUSH
