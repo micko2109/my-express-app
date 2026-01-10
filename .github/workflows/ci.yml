@@ -75,7 +75,7 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npm test
+        run: npx jest __tests__/server.test.js tests/books.test.js --coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
