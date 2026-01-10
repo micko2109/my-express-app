@@ -8,8 +8,9 @@ on:
 
 env:
   NODE_VERSION: 18
-  IMAGE_NAME: rirs-books-app
-  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  IMAGE_NAME: my-express-app
+  # Use secret or fallback to hardcoded username for debugging
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME != '' && secrets.DOCKER_HUB_USERNAME || 'milica21' }}
 
 jobs:
 
@@ -168,6 +169,7 @@ jobs:
           tags: |
             type=raw,value=dev
             type=sha
+            
 
       - name: Build and push Docker image (dev)
         if: steps.check-credentials.outputs.missing != 'true'
