@@ -54,9 +54,6 @@ jobs:
 # -----------------------------
 # 2. SONARCLOUD ANALYSIS
 # -----------------------------
-  # -----------------------------
-# 2. SONARCLOUD ANALYSIS
-# -----------------------------
 sonarcloud:
   runs-on: ubuntu-latest
   name: SonarCloud Analysis
