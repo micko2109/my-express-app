@@ -1,69 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books App</title>
+    <title>Books Management App - RIRS Projekt</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Books Management</h1>
+        <!-- Project Info Section -->
+        <header class="project-header">
+            <h1>📚 Books Management Application</h1>
+            <p class="project-description">
+                Aplikacija za upravljanje z knjigami, ki omogoča dodajanje, urejanje, 
+                brisanje in iskanje knjig ter ocenjevanje le-teh.
+            </p>
+        </header>
 
+        <!-- Team Section -->
+        <section class="team-section">
+            <h2>👥 Člani Ekipé</h2>
+            <div class="team-members">
+                <div class="team-member">
+                    <span class="member-name">Micko</span>
+                    <span class="member-role">Full Stack Developer</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Info Section -->
+        <section class="info-section">
+            <h2>ℹ️ O Projektu</h2>
+            <div class="info-cards">
+                <div class="info-card">
+                    <h3>🎯 Namen</h3>
+                    <p>Naučiti se osnov Git verzioniranja, CI/CD cevovodov in uvajanja aplikacij v različna okolja.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🛠️ Tehnologije</h3>
+                    <p>Node.js, Express, Docker, GitHub Actions, GitHub Pages, Docker Hub</p>
+                </div>
+                <div class="info-card">
+                    <h3>📦 Okolja</h3>
+                    <p>
+                        <strong>Development:</strong> Avtomatsko uvajanje iz main veje<br>
+                        <strong>Production:</strong> Ročna odobritev iz production veje
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2>✨ Funkcionalnosti</h2>
+            <ul class="features-list">
+                <li>📖 Prikaz vseh knjig</li>
+                <li>➕ Dodajanje novih knjig</li>
+                <li>🔍 Iskanje knjig po naslovu</li>
+                <li>📝 Urejanje knjig</li>
+                <li>🗑️ Brisanje knjig</li>
+                <li>⭐ Ocenjevanje knjig</li>
+                <li>📊 Statistika knjig</li>
+            </ul>
+        </section>
+
+        <!-- API Documentation Section -->
+        <section class="api-section">
+            <h2>🔌 API Endpoints</h2>
+            <table class="api-table">
+                <thead>
+                    <tr>
+                        <th>Metoda</th>
+                        <th>Endpoint</th>
+                        <th>Opis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>GET</td><td>/books</td><td>Vrni vse knjige</td></tr>
+                    <tr><td>GET</td><td>/books/:id</td><td>Vrni knjigo po ID</td></tr>
+                    <tr><td>POST</td><td>/books</td><td>Dodaj novo knjigo</td></tr>
+                    <tr><td>PUT</td><td>/books/:id</td><td>Uredi knjigo</td></tr>
+                    <tr><td>DELETE</td><td>/books/:id</td><td>Izbriši knjigo</td></tr>
+                    <tr><td>GET</td><td>/books/search?title=</td><td>Iskanje knjig</td></tr>
+                    <tr><td>POST</td><td>/books/:id/rate</td><td>Oceni knjigo</td></tr>
+                    <tr><td>GET</td><td>/books/stats</td><td>Statistika</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- App Section -->
         <section id="books-list">
-            <h2>All Books</h2>
-            <button id="load-books">Load Books</button>
+            <h2>📚 Vse Knjige</h2>
+            <button id="load-books">Naloži Knjige</button>
             <ul id="books"></ul>
         </section>
 
         <section id="add-book">
-            <h2>Add New Book</h2>
-            <input type="text" id="book-title" placeholder="Book Title">
-            <button id="add-book-btn">Add Book</button>
+            <h2>➕ Dodaj Novo Knjigo</h2>
+            <input type="text" id="book-title" placeholder="Naslov knjige">
+            <button id="add-book-btn">Dodaj Knjigo</button>
         </section>
 
         <section id="search-book">
-            <h2>Search Books</h2>
-            <input type="text" id="search-title" placeholder="Search by title">
-            <button id="search-btn">Search</button>
+            <h2>🔍 Iskanje Knjig</h2>
+            <input type="text" id="search-title" placeholder="Išči po naslovu">
+            <button id="search-btn">Išči</button>
             <ul id="search-results"></ul>
         </section>
 
         <section id="book-details">
-            <h2>Book Details</h2>
-            <input type="number" id="book-id" placeholder="Book ID">
-            <button id="get-book-btn">Get Book</button>
+            <h2>📖 Podrobnosti Knjige</h2>
+            <input type="number" id="book-id" placeholder="ID knjige">
+            <button id="get-book-btn">Prikaži Podrobnosti</button>
             <div id="book-info"></div>
         </section>
 
         <section id="update-book">
-            <h2>Update Book</h2>
-            <input type="number" id="update-id" placeholder="Book ID">
-            <input type="text" id="update-title" placeholder="New Title">
-            <button id="update-btn">Update</button>
+            <h2>📝 Uredi Knjigo</h2>
+            <input type="number" id="update-id" placeholder="ID knjige">
+            <input type="text" id="update-title" placeholder="Nov naslov">
+            <button id="update-btn">Posodobi</button>
         </section>
 
         <section id="rate-book">
-            <h2>Rate Book</h2>
-            <input type="number" id="rate-id" placeholder="Book ID">
-            <input type="number" id="rating" placeholder="Rating (1-5)" min="1" max="5">
-            <button id="rate-btn">Rate</button>
+            <h2>⭐ Oceni Knjigo</h2>
+            <input type="number" id="rate-id" placeholder="ID knjige">
+            <input type="number" id="rating" placeholder="Ocena (1-5)" min="1" max="5">
+            <button id="rate-btn">Oceni</button>
         </section>
 
-
         <section id="delete-book">
-            <h2>Delete Book</h2>
-            <input type="number" id="delete-id" placeholder="Book ID">
-            <button id="delete-btn">Delete</button>
+            <h2>🗑️ Izbriši Knjigo</h2>
+            <input type="number" id="delete-id" placeholder="ID knjige">
+            <button id="delete-btn">Izbriši</button>
         </section>
 
         <section id="stats">
-            <h2>Statistics</h2>
-            <button id="get-stats">Get Stats</button>
+            <h2>📊 Statistika</h2>
+            <button id="get-stats">Prikaži Statistiko</button>
             <div id="stats-info"></div>
         </section>
+
+        <!-- Footer -->
+        <footer class="project-footer">
+            <p>🚀 Projekt RIRS - Razvoj Informatikskih Rešitev in Sistemov</p>
+            <p>GitHub Actions CI/CD Pipeline with GitHub Pages & Docker Hub</p>
+        </footer>
     </div>
 
     <script src="app.js"></script>
 </body>
 </html>
+
