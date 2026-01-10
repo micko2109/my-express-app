@@ -93,12 +93,7 @@ jobs:
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
 
-      - name: SonarCloud Quality Gate Check
-        uses: SonarSource/sonarcloud-github-quality-gate@master
         with:
-          sonarToken: ${{ secrets.SONAR_TOKEN }}
-          organization: ${{ env.SONAR_ORG_KEY }}
-          projectKey: ${{ env.SONAR_PROJECT_KEY }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
