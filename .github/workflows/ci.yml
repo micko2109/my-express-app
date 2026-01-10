@@ -98,7 +98,6 @@ sonarcloud:
           -Dsonar.qualitygate.wait=true
           -Dsonar.qualitygate.timeout=300
 
-
 # -----------------------------
 # 3. TESTS
 # -----------------------------
