@@ -1,60 +1,244 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 20px;
-    background-color: #fff5f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #4a5568;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #5a67d8;
+    border-bottom: 2px solid #5a67d8;
+    padding-bottom: 10px;
+    margin-top: 25px;
+}
+
+/* Project Header */
+.project-header {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    margin-bottom: 25px;
+    color: white;
+}
+
+.project-header h1 {
+    color: white;
+    margin: 0;
+}
+
+.project-description {
+    font-size: 1.1em;
+    opacity: 0.95;
+    margin-top: 10px;
+}
+
+/* Team Section */
+.team-section {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.team-section h2 {
+    color: #744210;
+    border-bottom-color: #744210;
+}
+
+.team-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.team-member {
+    background: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.member-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #5a67d8;
+}
+
+.member-role {
+    color: #718096;
+    font-size: 0.9em;
+}
+
+/* Info Section */
+.info-section {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.info-section h2 {
+    color: #2d3748;
+    border-bottom-color: #2d3748;
+}
+
+.info-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.info-card {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(255, 107, 53, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1, h2 {
-    color: #d84315;
+.info-card h3 {
+    color: #5a67d8;
+    margin-top: 0;
 }
 
+/* Features Section */
+.features-section {
+    background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.features-section h2 {
+    color: #553c9a;
+    border-bottom-color: #553c9a;
+}
+
+.features-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.features-list li {
+    background: white;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border-left: 4px solid #553c9a;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* API Section */
+.api-section {
+    background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+}
+
+.api-section h2 {
+    color: #1a365d;
+    border-bottom-color: #1a365d;
+}
+
+.api-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.api-table th,
+.api-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.api-table th {
+    background: #1a365d;
+    color: white;
+}
+
+.api-table tr:hover {
+    background: #f7fafc;
+}
+
+/* App Sections */
 section {
-    margin-bottom: 30px;
-    padding: 15px;
-    border: 1px solid #ffcc02;
-    border-radius: 5px;
-    background: linear-gradient(135deg, #fff5f0 0%, #ffffff 100%);
+    margin-bottom: 25px;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f7fafc;
+}
+
+section:hover {
+    border-color: #5a67d8;
+    transition: border-color 0.3s ease;
 }
 
 input {
-    padding: 8px;
-    margin: 5px 0;
-    border: 1px solid #ffa726;
-    border-radius: 4px;
-    width: 200px;
+    padding: 10px;
+    margin: 8px 0;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 14px;
 }
 
 input:focus {
     outline: none;
-    border-color: #ff6b35;
-    box-shadow: 0 0 5px rgba(255, 107, 53, 0.3);
+    border-color: #5a67d8;
+    box-shadow: 0 0 0 3px rgba(90, 103, 216, 0.2);
 }
 
 button {
-    padding: 8px 16px;
-    background-color: #ff6b35;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    margin: 5px;
+    margin: 8px 5px 8px 0;
+    font-weight: bold;
     transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: #e55a2b;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(229, 90, 43, 0.3);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 button:active {
@@ -67,17 +251,56 @@ ul {
 }
 
 li {
-    background: linear-gradient(135deg, #fff5f0 0%, #ffeaa7 100%);
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 4px;
-    border-left: 4px solid #ff6b35;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin: 8px 0;
+    padding: 12px 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #book-info, #stats-info {
-    margin-top: 10px;
-    padding: 10px;
-    background: linear-gradient(135deg, #fff5f0 0%, #ffeaa7 100%);
-    border-radius: 4px;
-    border: 1px solid #ffa726;
+    margin-top: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+
+/* Footer */
+.project-footer {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    color: white;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.project-footer p {
+    margin: 5px 0;
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .info-cards,
+    .features-list {
+        grid-template-columns: 1fr;
+    }
+    
+    input {
+        max-width: 100%;
+    }
+    
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
