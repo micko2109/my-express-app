@@ -1,0 +1,120 @@
+name: Complete CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: 18
+  IMAGE_NAME: my-express-app
+
+jobs:
+
+# -----------------------------
+# 1. BUILD PHASE
+# -----------------------------
+  build:
+    runs-on: ubuntu-latest
+    name: Build Application
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend & backend
+        run: |
+          npm run build
+          ls -la dist
+          ls -la build
+
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
+
+      - name: Upload backend build
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: build/
+
+# -----------------------------
+# 2. TESTS
+# -----------------------------
+  tests:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npx jest tests/books.test.js
+
+# -----------------------------
+# 3. DOCKER BUILD & PUSH
+# -----------------------------
+  docker:
+    runs-on: ubuntu-latest
+    name: Build & Push Docker Image
+    needs: tests
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      
+
+# -----------------------------
+# 4. DEPLOY TO VERCEL
+# -----------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Vercel
+    needs: docker
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Vercel
+        run: npm install -g vercel
+
+      - name: Pull Vercel config
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Vercel project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
