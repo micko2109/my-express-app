@@ -55,14 +55,16 @@ jobs:
       # Send metrics to Datadog
       # -------------------------
       - name: Send CI/CD metrics to Datadog
-        uses: datadog/datadog-ci@v4.12.0
+        uses: DataDog/datadog-ci@v2.27.0
         env:
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
         with:
-          metrics: |
-            - type: count
-              name: ci.pipeline.num
-              tags: "branch:${{ github.ref_name }},workflow:${{ github.workflow }},service:my-express-app,env:production"
+          apiKey: ${{ secrets.DATADOG_API_KEY }}
+          service: my-express-app
+          env: production
+          tags: "branch:${{ github.ref_name }},workflow:${{ github.workflow }}"
+
+
 
   # -----------------------------
   # 2. SONARCLOUD ANALYSIS
