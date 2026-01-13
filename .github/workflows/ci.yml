@@ -51,6 +51,18 @@ jobs:
           name: backend-build
           path: build/
 
+      # -------------------------
+      # Send metrics to Datadog
+      # -------------------------
+      - name: Send CI/CD metrics to Datadog
+        uses: DataDog/datadog-ci-action@v1
+        with:
+          api-key: ${{ secrets.DATADOG_API_KEY }}
+          service: my-express-app
+          env: production
+          # optional: job name, duration, status
+          tags: "branch:${{ github.ref_name }},workflow:${{ github.workflow }}"
+
   # -----------------------------
   # 2. SONARCLOUD ANALYSIS
   # -----------------------------
@@ -172,4 +184,6 @@ jobs:
 
       - name: Deploy to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+
 
