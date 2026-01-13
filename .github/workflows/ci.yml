@@ -55,7 +55,7 @@ jobs:
       # Send metrics to Datadog
       # -------------------------
       - name: Send CI/CD metrics to Datadog
-        uses: DataDog/datadog-ci-action@v1
+        uses: datadog/datadog-ci@v3
         with:
           api-key: ${{ secrets.DATADOG_API_KEY }}
           service: my-express-app
