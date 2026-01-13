@@ -55,14 +55,13 @@ jobs:
       # Send metrics to Datadog
       # -------------------------
       - name: Send CI/CD metrics to Datadog
-        uses: DataDog/datadog-ci@v2.27.0
+        uses: datadog/datadog-ci@v0.21.0
         env:
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
         with:
           apiKey: ${{ secrets.DATADOG_API_KEY }}
-          service: my-express-app
-          env: production
-          tags: "branch:${{ github.ref_name }},workflow:${{ github.workflow }}"
+
+
 
 
 
