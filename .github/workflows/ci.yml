@@ -51,20 +51,6 @@ jobs:
           name: backend-build
           path: build/
 
-      # -------------------------
-      # Send metrics to Datadog
-      # -------------------------
-      - name: Send CI/CD metrics to Datadog
-        uses: datadog/datadog-ci@v0.21.0
-        env:
-          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-        with:
-          apiKey: ${{ secrets.DATADOG_API_KEY }}
-
-
-
-
-
   # -----------------------------
   # 2. SONARCLOUD ANALYSIS
   # -----------------------------
@@ -102,6 +88,7 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ env.SONAR_ORG_KEY }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
             -Dsonar.sources=.
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/coverage/**
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
