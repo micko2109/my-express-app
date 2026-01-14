@@ -117,7 +117,6 @@ jobs:
   # -----------------------------
   # 4. DOCKER BUILD & PUSH
   # -----------------------------
-
   docker-development:
     runs-on: ubuntu-latest
     needs: tests
@@ -189,44 +188,31 @@ jobs:
   # -----------------------------
   # 5. DEPLOY TO VERCEL
   # -----------------------------
-  deploy-staging:
+  deploy:
     runs-on: ubuntu-latest
-    needs: docker-development
-    if: startsWith(github.ref, 'refs/heads/feature/')
-    name: Deploy to Vercel (Staging)
+    name: Deploy to Vercel
+    needs: docker
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+
       - name: Install Vercel
         run: npm install -g vercel
-      - name: Pull Vercel config
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build Vercel project
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy to Vercel
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
 
-  deploy-production:
-    runs-on: ubuntu-latest
-    needs: docker-production
-    if: github.ref == 'refs/heads/main'
-    name: Deploy to Vercel (Production)
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Install Vercel
-        run: npm install -g vercel
       - name: Pull Vercel config
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Build Vercel project
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+
 
 
