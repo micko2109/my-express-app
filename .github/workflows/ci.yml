@@ -9,7 +9,7 @@ on:
 env:
   NODE_VERSION: 18
   IMAGE_NAME: my-express-app
-  SONAR_PROJECT_KEY: micko2109
+  SONAR_PROJECT_KEY: micko2109_my-express-app
   SONAR_ORG_KEY: micko2109
 
 jobs:
@@ -88,7 +88,6 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ env.SONAR_ORG_KEY }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
             -Dsonar.sources=.
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/coverage/**
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
